@@ -1,3 +1,6 @@
+D:\devdojo-microservices\core\src\main\java\devdojo\academy\core\model\ApplicationUser.java
 D:\devdojo-microservices\core\src\main\java\devdojo\academy\core\model\AbstractEntity.java
+D:\devdojo-microservices\core\src\main\java\devdojo\academy\core\property\JwtConfiguration.java
 D:\devdojo-microservices\core\src\main\java\devdojo\academy\core\repository\CourseRepository.java
 D:\devdojo-microservices\core\src\main\java\devdojo\academy\core\model\Course.java
+D:\devdojo-microservices\core\src\main\java\devdojo\academy\core\repository\ApplicationUserRepository.java
