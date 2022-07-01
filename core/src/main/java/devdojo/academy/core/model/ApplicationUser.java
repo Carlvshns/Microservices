@@ -32,7 +32,31 @@ public class ApplicationUser implements AbstractEntity{
 
     @NotNull(message = "The field 'password' is mandatory")
     @Column(nullable = false)
+    @ToString.Exclude
     private String password;
+
+    @NotNull(message = "The field 'role' is mandatory")
+    @Column(nullable = false)
+    private String role = "USER";
+
+    public ApplicationUser(Long id, @NotNull(message = "The field 'username' is mandatory") String username,
+            @NotNull(message = "The field 'password' is mandatory") String password,
+            @NotNull(message = "The field 'role' is mandatory") String role) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    public ApplicationUser(@NotNull ApplicationUser applicationUser) {
+        this.id = applicationUser.getId();
+        this.username = applicationUser.getUsername();
+        this.password = applicationUser.getPassword();
+        this.role = applicationUser.getRole();
+    }
+
+    public ApplicationUser() {
+    }
 
     @Override
     public Long getId() {
@@ -55,6 +79,12 @@ public class ApplicationUser implements AbstractEntity{
     public void setPassword(String password) {
         this.password = password;
     }
- 
+    
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
+    }   
 }
 
