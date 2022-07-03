@@ -1,10 +1,8 @@
 package devdojo.academy.auth.security.filter;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -12,34 +10,34 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.SignedJWT;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import devdojo.academy.core.model.ApplicationUser;
 import devdojo.academy.core.property.JwtConfiguration;
-import lombok.SneakyThrows;
+import devdojo.academy.security.token.creator.TokenCreator;
 
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
     
     private final AuthenticationManager authenticationManager;
     private final JwtConfiguration jwtConfiguration;
+    private final TokenCreator tokenCreator;
     
     public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
-            JwtConfiguration jwtConfiguration) {
+            JwtConfiguration jwtConfiguration, TokenCreator tokenCreator) {
         this.authenticationManager = authenticationManager;
         this.jwtConfiguration = jwtConfiguration;
+        this.tokenCreator = tokenCreator;
     }
     
     @Override
-    @SneakyThrows
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response){
         System.out.println("Attempting authentication. . ."); //Or log.info
         
             ApplicationUser applicationUser = new ApplicationUser();
@@ -66,22 +64,30 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication auth) throws IOException, ServletException {
         System.out.println("Authentication was sucessful for the user {"+auth.getName()+"}, genereting JWE Token"); //Or log.info
+
+        SignedJWT signedJWT = null;
+        try {
+            signedJWT = tokenCreator.createSignedJWT(auth);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (JOSEException e) {
+            e.printStackTrace();
+        }
+
+        String encryptedToken = "";
+        try {
+            encryptedToken = tokenCreator.encryptToken(signedJWT);
+        } catch (JOSEException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("Token generated succesfully, adding it to the response header"); //Or log.info
+
+        response.addHeader("Acess-Control-Expose-Headers", 
+        "XSRF-TOKEN, "+jwtConfiguration.getHeader().getName());
+    
+        response.addHeader(jwtConfiguration.getHeader().getName(), 
+        jwtConfiguration.getHeader().getPrefix() + encryptedToken);
     }
 
-    private SignedJWT createSignedJWT(Authentication auth){
-        System.out.println("Starting to create the signed JWT");
-        ApplicationUser applicationuser = (ApplicationUser) auth.getPrincipal();
-
-    }
-
-    private JWTClaimsSet createJWtClaimsSet(Authentication auth, ApplicationUser applicationUser){
-        System.out.println("Creating the JWtClaimsSet Object for "+applicationUser); //Or log.info
-        return new JWTClaimsSet.Builder()
-        .subject(applicationUser.getUsername())
-        .claim("authorities", auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-        .issuer("http://academy.devdojo")
-        .issueTime(new Date())
-        .expirationTime(new date(System.currentTimeMillis() + (jwtConfiguration.getExpiration() * 1000)))
-        .build();
-    }
 }

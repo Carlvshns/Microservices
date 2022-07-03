@@ -1,6 +1,5 @@
 {
     "configurations": [
-
         {
             "type": "java",
             "name": "Spring Boot-CarlApplication<carl>",
@@ -9,6 +8,17 @@
             "console": "internalConsole",
             "mainClass": "devdojo.academy.carl.CarlApplication",
             "projectName": "carl",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-DiscoveryApplication<discovery>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "devdojo.academy.discovery.DiscoveryApplication",
+            "projectName": "discovery",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
