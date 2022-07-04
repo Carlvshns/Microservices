@@ -11,10 +11,10 @@ import devdojo.academy.core.property.JwtConfiguration;
 
 public class SecurityTokenConfig extends WebSecurityConfigurerAdapter{
 
-    protected final JwtConfiguration jwtConfiguation;
+    protected final JwtConfiguration jwtConfiguration;
 
-    public SecurityTokenConfig(JwtConfiguration jwtConfiguation){
-        this.jwtConfiguation = jwtConfiguation;
+    public SecurityTokenConfig(JwtConfiguration jwtConfiguration){
+        this.jwtConfiguration = jwtConfiguration;
     }
 
     @Override
@@ -26,8 +26,8 @@ public class SecurityTokenConfig extends WebSecurityConfigurerAdapter{
         ((req, res, e) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED))
         .and()
         .authorizeRequests()
-        .antMatchers(jwtConfiguation.getLoginUrl()).permitAll()
-        .antMatchers("/course/admin/**")
+        .antMatchers(jwtConfiguration.getLoginUrl()).permitAll()
+        .antMatchers("/course/v1/admin/**")
         .hasRole("ADMIN").anyRequest().authenticated();
     }
 }
