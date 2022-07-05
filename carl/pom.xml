@@ -22,6 +22,12 @@
 			<artifactId>core</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>devdojo.academy</groupId>
+			<artifactId>token</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 		
 	</dependencies>
 
