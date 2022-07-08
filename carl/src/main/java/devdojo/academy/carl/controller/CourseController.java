@@ -24,7 +24,7 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @ApiOperation(value = "List all avaible courses", response = Course[].class)
+    @ApiOperation(value = "List all available courses", response = Course[].class)
     @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Iterable<Course>> list(Pageable pageable){
         return new ResponseEntity<>(courseService.list(pageable), HttpStatus.OK);
